@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico Integral de Vertimientos · ESE Hospital El Sagrado Corazón</title>
+<style>
+:root{
+  --navy:#102a43;--blue:#1f5d8f;--blue2:#2e78b7;--bg:#f3f6f9;--card:#fff;
+  --text:#243447;--muted:#66788a;--border:#dce4ec;--green:#17825b;--amber:#b87508;
+  --red:#b53a3a;--shadow:0 5px 18px rgba(16,42,67,.07)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+button{font:inherit}
+.app-header{background:linear-gradient(135deg,#0d263e,#1d5684);color:white;padding:24px 30px}
+.header-inner{max-width:1480px;margin:auto;display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.78;margin-bottom:6px}
+h1{margin:0;font-size:26px;line-height:1.15}
+.header-sub{margin:8px 0 0;opacity:.86;font-size:14px}
+.header-meta{text-align:right;font-size:12px;line-height:1.7;opacity:.9}
+.shell{max-width:1480px;margin:auto;display:flex;min-height:calc(100vh - 105px)}
+.sidebar{width:250px;background:#0e2942;color:#d8e5f0;padding:18px 12px;flex:none}
+.sidebar-title{padding:8px 12px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.6}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{border:0;background:transparent;color:inherit;text-align:left;padding:11px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+.nav button:hover,.nav button.active{background:#205d8d;color:#fff}
+.main{flex:1;padding:24px;min-width:0}
+.section{display:none}.section.active{display:block}
+.page-title{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:18px}
+.page-title h2{margin:0;color:var(--navy);font-size:22px}
+.page-title p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:#fff;color:var(--navy);padding:9px 13px;border-radius:8px;cursor:pointer;font-size:13px}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.grid{display:grid;gap:14px}
+.grid.kpi{grid-template-columns:repeat(6,1fr)}
+.grid.two{grid-template-columns:1.35fr 1fr}
+.grid.three{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:16px}
+.kpi .card{min-height:92px}.kpi .num{font-size:25px;font-weight:750;color:var(--navy)}.kpi .lab{font-size:11px;color:var(--muted);margin-top:4px}
+.card h3{margin:0 0 8px;color:var(--navy);font-size:16px}.card p{font-size:13px;line-height:1.55;margin:6px 0}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.badge.green{background:#e5f5ee;color:#146b4c}.badge.amber{background:#fff3da;color:#8a5a06}.badge.red{background:#fdeaea;color:#963434}.badge.blue{background:#e8f1f8;color:#215a84}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:10px 9px;border-bottom:1px solid var(--border);vertical-align:top;text-align:left}th{background:#f7f9fb;color:#44596c;font-size:11px;text-transform:uppercase;letter-spacing:.03em}tr:last-child td{border-bottom:0}
+.status-row{display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}.status-row:last-child{border-bottom:0}.dot{width:9px;height:9px;border-radius:50%;background:#8aa0b4}.dot.green{background:#17825b}.dot.amber{background:#d28a19}.dot.red{background:#b53a3a}
+.map-card{overflow:hidden}
+.map-layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:12px}
+.connection-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.point-photo-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}.point-photo-head{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid var(--border)}.point-photo-head h3{margin:0 0 5px;font-size:14px;color:var(--navy)}.point-photo-head .badge{font-size:9px}.point-chip{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:10px;flex:none}.point-chip.red{background:#d62f2f}.point-chip.orange{background:#e8a516}.point-chip.green{background:#4caf50}.point-photo-card>img{display:block;width:100%;height:190px;object-fit:cover;cursor:zoom-in;background:#edf2f5}.point-photo-info{padding:12px 14px;font-size:11px;color:#5c6e7d;line-height:1.5}.point-photo-info p{margin:7px 0}.point-photo-info b{color:var(--navy)}
+@media(max-width:900px){.connection-photo-grid{grid-template-columns:1fr}.point-photo-card>img{height:230px}}
+
+.map-panel{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.map-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);background:#fbfcfd}
+.map-panel-head h3{margin:0;color:var(--navy);font-size:16px}
+.map-tools{display:flex;gap:6px;flex-wrap:wrap}
+.map-tools .btn{padding:7px 10px;font-size:11px}
+.map-viewport{position:relative;background:#dbe4ea;overflow:hidden}
+.map-viewport img{width:100%;display:block;height:auto}
+.map-marker{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:5;transition:.18s ease}
+.map-marker:hover{transform:translate(-50%,-100%) scale(1.08)}
+.map-marker .marker-shape{width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#d62f2f;border:3px solid white;box-shadow:0 3px 9px rgba(0,0,0,.28);position:relative}
+.map-marker .marker-shape:after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:white;left:8px;top:8px}
+.map-marker .marker-label{position:absolute;left:26px;top:-5px;background:white;border:1px solid #d7e0e8;border-radius:8px;padding:6px 9px;white-space:nowrap;font-size:11px;font-weight:800;color:var(--navy);box-shadow:0 3px 10px rgba(0,0,0,.13)}
+.map-marker.p02 .marker-shape{background:#e8a516}.map-marker.p03 .marker-shape{background:#4caf50}
+.map-legend{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.96);border:1px solid #dce4ec;border-radius:9px;padding:10px 12px;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:11px}
+.map-legend-row{display:flex;align-items:center;gap:8px;margin:5px 0}.legend-pin{width:12px;height:12px;border-radius:50%}.legend-pin.red{background:#d62f2f}.legend-pin.orange{background:#e8a516}.legend-pin.green{background:#4caf50}
+.map-scale{position:absolute;left:14px;bottom:14px;transform:translateY(78px);background:white;border:1px solid #dce4ec;border-radius:5px;padding:4px 8px;font-size:10px;color:#526779}
+.map-side{display:flex;flex-direction:column;gap:10px}
+.map-side-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:13px;box-shadow:var(--shadow)}
+.map-side-card h3{margin:0 0 8px;color:var(--navy);font-size:14px}
+.connection-card{border:1px solid #e0e7ed;border-radius:9px;padding:11px;margin-top:9px;cursor:pointer}
+.connection-card:hover{border-color:#94b3cc;background:#fbfdff}
+.connection-head{display:flex;gap:9px;align-items:flex-start}
+.connection-icon{width:25px;height:25px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);flex:none;margin:2px 2px 0 1px}
+.connection-icon.red{background:#d62f2f}.connection-icon.orange{background:#e8a516}.connection-icon.green{background:#4caf50}
+.connection-icon:after{content:"";display:block;width:7px;height:7px;border-radius:50%;background:white;margin:6px}
+.connection-title{font-weight:800;color:var(--navy);font-size:12px;line-height:1.25}
+.connection-status{margin-left:auto;font-size:9px;padding:4px 6px;border-radius:99px;background:#fff2d2;color:#8b5d06;font-weight:800;white-space:nowrap}
+.connection-status.ok{background:#e7f6ee;color:#16704f}
+.connection-body{font-size:10px;color:#5f7180;line-height:1.45;margin:8px 0 0 34px}
+.connection-body b{color:#334b5e}
+.map-info-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.route-step{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.route-step .circle{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;margin:0 auto 6px;background:#edf3f7;color:var(--navy);font-weight:800;font-size:11px}
+.route-step strong{font-size:11px;color:var(--navy);display:block}.route-step span{font-size:9px;color:var(--muted)}
+@media(max-width:1100px){.map-layout{grid-template-columns:1fr}.map-side{display:grid;grid-template-columns:repeat(3,1fr)}.map-info-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.map-side{display:block}.map-info-strip{grid-template-columns:1fr 1fr}.map-marker .marker-label{font-size:9px}}
+.map-stage{position:relative;background:#e7edf2;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.map-stage img{display:block;width:100%;height:auto}
+.map-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:3}
+.pin-head{width:28px;height:28px;background:#c92f2f;border:3px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 7px #0005}
+.pin-head:after{content:"";width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;left:7px;top:7px}
+.pin-label{position:absolute;left:23px;top:-3px;white-space:nowrap;background:#fff;padding:6px 9px;border-radius:7px;border:1px solid #d8e0e8;box-shadow:0 2px 7px #0002;font-size:11px;font-weight:750;color:var(--navy);transform:rotate(0deg)}
+.map-toolbar{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;gap:10px;flex-wrap:wrap}.map-note{font-size:11px;color:var(--muted)}
+.point-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.point-card{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;cursor:pointer}.point-card:hover{border-color:#91aec6}
+.point-id{font-size:11px;color:var(--blue);font-weight:800}.point-card h3{margin:4px 0;font-size:15px}.coords{font-family:Consolas,monospace;font-size:11px;color:#4d6173}
+.evidence{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}.evidence img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;cursor:pointer;border:1px solid var(--border)}
+.route-img{width:100%;display:block;border-radius:10px;border:1px solid var(--border)}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.step{border-top:3px solid #b7c7d5;padding:10px 8px;background:#f9fbfc;border-radius:0 0 8px 8px}.step strong{display:block;color:var(--navy);font-size:13px}.step span{font-size:11px;color:var(--muted)}
+.floor-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 16px}.floor-tab{border:1px solid var(--border);background:#fff;color:#41576a;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:12px}.floor-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.photo-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px #102a4308}
+.photo-card img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:#eef2f5}.photo-info{padding:9px 10px}.photo-info strong{display:block;font-size:12px;color:var(--navy)}.photo-info span{font-size:10px;color:var(--muted)}
+.empty{border:1px dashed #bccbd8;background:#fbfcfd;padding:28px;border-radius:10px;color:var(--muted);text-align:center;font-size:13px}
+.source-box{background:#f7fafc;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:11px;color:#5e7181;line-height:1.55}
+.callout{border-left:4px solid var(--amber);background:#fff8e9;padding:12px 14px;border-radius:7px;font-size:12px;line-height:1.55}
+.print-only{display:none}
+.modal{position:fixed;inset:0;background:#07131fe8;display:none;align-items:center;justify-content:center;padding:25px;z-index:999}
+.modal.open{display:flex}.modal-box{max-width:1000px;max-height:94vh;position:relative}.modal img{max-width:100%;max-height:84vh;display:block;border-radius:10px}.modal-caption{background:#fff;padding:10px 13px;border-radius:0 0 10px 10px;font-size:12px;color:var(--navy)}.modal-close{position:absolute;right:-13px;top:-13px;border:0;width:38px;height:38px;border-radius:50%;background:#fff;color:var(--navy);font-size:22px;cursor:pointer}
+@media(max-width:1200px){.grid.kpi{grid-template-columns:repeat(3,1fr)}.photo-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.shell{display:block}.sidebar{width:100%;position:static}.nav{flex-direction:row;overflow:auto}.nav button{white-space:nowrap}.grid.two,.grid.three,.point-cards{grid-template-columns:1fr}.timeline{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.main{padding:14px}.grid.kpi,.photo-grid{grid-template-columns:1fr 1fr}.header-inner{display:block}.header-meta{text-align:left;margin-top:10px}.timeline{grid-template-columns:1fr}}
+@media print{
+  .sidebar,.actions,.btn,.floor-tabs,.no-print{display:none!important}
+  .shell{display:block}.main{padding:0}.section{display:block!important;page-break-inside:avoid;margin-bottom:18px}
+  .app-header{padding:15px;background:#fff;color:#102a43;border-bottom:2px solid #102a43}
+  .card{box-shadow:none}.photo-grid{grid-template-columns:repeat(4,1fr)}
+  .print-only{display:block}
+}
+
+/* Apartados adicionales solicitados: imágenes por nivel y mapas/planos */
+.level-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.level-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.level-card-head{padding:12px 14px;background:#f7fafc;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.level-card-head h3{margin:0;color:var(--navy);font-size:15px}.level-count{font-size:10px;font-weight:800;color:#647789;background:#eaf0f5;border-radius:99px;padding:5px 8px}
+.level-photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:10px}
+.level-photo{border:1px solid #e0e7ed;border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;transition:.18s}.level-photo:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(17,48,76,.12)}
+.level-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}.level-photo figcaption{padding:7px 8px;font-size:10px;color:#53697b;line-height:1.35}
+.level-empty{margin:10px;border:1px dashed #cbd7e1;border-radius:9px;padding:18px;text-align:center;color:#7b8d9c;font-size:11px;background:#fbfcfd}
+.download-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+.download-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:180px}
+.download-icon{width:44px;height:44px;border-radius:10px;background:#eaf2f8;color:var(--navy);display:grid;place-items:center;font-size:22px;margin-bottom:12px}
+.download-card h3{margin:0 0 6px;color:var(--navy);font-size:15px}.download-card p{font-size:11px;color:#66788a;line-height:1.5;margin:0 0 14px}.download-card .btn{margin-top:auto;align-self:flex-start}
+.download-card.pending{border-style:dashed;background:#fcfdfe}.download-card.pending .download-icon{background:#f2f4f6;color:#8393a0}
+@media(max-width:1050px){.level-gallery,.download-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.level-gallery,.download-grid{grid-template-columns:1fr}.level-photo-grid{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="header-inner">
+    <div>
+      <div class="kicker">Diagnóstico técnico · vertimientos y red sanitaria</div>
+      <h1>ESE Hospital El Sagrado Corazón</h1>
+      <div class="header-sub">Briceño, Antioquia · Diagnóstico preliminar de puntos generadores de vertimientos</div>
+    </div>
+    <div class="header-meta">
+      <b>Visita técnica</b><br>28 de agosto de 2026<br>
+      <span>Fuente principal: diagnóstico suministrado</span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+<aside class="sidebar">
+  <div class="sidebar-title">Navegación del diagnóstico</div>
+  <nav class="nav">
+    <button class="active" data-section="resumen">01 · Resumen ejecutivo</button>
+    <button data-section="sistema">02 · Sistema de evacuación</button>
+    <button data-section="inventario">03 · Inventario por nivel</button>
+    <button data-section="generadores">04 · Puntos generadores</button>
+    <button data-section="mapa">05 · Visor geográfico</button>
+    <button data-section="imagenes">06 · Imágenes por nivel</button>
+    <button data-section="planos">07 · Mapas y planos</button>
+    <button data-section="puntos">08 · Cajas de inspección y punto de vertimiento</button>
+    <button data-section="hallazgos">09 · Hallazgos y discrepancias</button>
+    <button data-section="conclusiones">10 · Conclusiones</button>
+  </nav>
+</aside>
+
+<main class="main">
+
+<section id="resumen" class="section active">
+  <div class="page-title">
+    <div><h2>Resumen ejecutivo</h2><p>Vista consolidada del diagnóstico técnico del hospital.</p></div>
+    <div class="actions"><button class="btn primary" onclick="window.print()">Imprimir / guardar PDF</button></div>
+  </div>
+  <div class="grid kpi">
+    <div class="card"><div class="num">5</div><div class="lab">Niveles evaluados</div></div>
+    <div class="card"><div class="num">30</div><div class="lab">Sanitarios</div></div>
+    <div class="card"><div class="num">35</div><div class="lab">Lavamanos</div></div>
+    <div class="card"><div class="num">11</div><div class="lab">Duchas</div></div>
+    <div class="card"><div class="num">3</div><div class="lab">Puntos verificados</div></div>
+    <div class="card"><div class="num">24 h</div><div class="lab">Operación hospitalaria</div></div>
+  </div>
+
+  <div class="grid two">
+    <div class="card">
+      <h3>Identificación institucional</h3>
+      <table>
+        <tr><th>Institución</th><td>ESE Hospital El Sagrado Corazón</td></tr>
+        <tr><th>Municipio</th><td>Briceño, Antioquia</td></tr>
+        <tr><th>Dirección</th><td>Carrera 9 No. 10-38 y Calle 11 No. 8-31</td></tr>
+        <tr><th>Área del lote</th><td>1.537 m²</td></tr>
+        <tr><th>Área construida</th><td>1.383,5 m²</td></tr>
+        <tr><th>Atiende la visita</th><td>Maira Alejandra Zapata</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Operación y población</h3>
+      <div class="status-row"><span class="dot green"></span><b>35</b> personas permanentes aprox.</div>
+      <div class="status-row"><span class="dot"></span><b>45</b> personas flotantes aprox.</div>
+      <div class="status-row"><span class="dot"></span><b>72</b> pacientes atendidos/día</div>
+      <div class="status-row"><span class="dot amber"></span>Mayor afluencia: martes y viernes</div>
+      <div class="status-row"><span class="dot amber"></span>Horario pico: 10:00 a.m.–12:00 m.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Estado general del diagnóstico</h3>
+    <div class="grid three">
+      <div><span class="badge green">CONFIRMADO</span><p>Nivel 3 – Urgencias: caja de inspección y descarga activa por tubería PVC.</p></div>
+      <div><span class="badge amber">POR CONFIRMAR</span><p>Niveles 1 y 2: posible conexión directa al alcantarillado, sin caja de inspección.</p></div>
+      <div><span class="badge blue">CONFIRMADO · BAJO USO</span><p>Niveles 4 y 5: caja de inspección con poco sedimento y presencia principalmente de hojarasca.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="sistema" class="section">
+  <div class="page-title"><div><h2>Sistema de evacuación de aguas residuales</h2><p>Información reportada en el diagnóstico.</p></div></div>
+  <div class="grid two">
+    <div class="card">
+      <h3>Condiciones generales</h3>
+      <table>
+        <tr><th>Conexión a alcantarillado público</th><td><span class="badge green">SÍ</span></td></tr>
+        <tr><th>Tipo de conexión</th><td>Combinada: aguas negras + aguas lluvias en la misma red.</td></tr>
+        <tr><th>Tratamiento previo</th><td><span class="badge amber">NO</span><br>Sin pozo séptico, sin PTAR y sin planta compacta.</td></tr>
+        <tr><th>Vertimiento directo a río/quebrada</th><td>La descarga se realiza a través de la red pública de alcantarillado.</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Lectura técnica del diagnóstico</h3>
+      <p>El hospital está conectado al alcantarillado público y no cuenta con tratamiento previo de aguas residuales reportado.</p>
+      <p>La verificación de campo identifica tres puntos asociados a los niveles del hospital, con diferente grado de confirmación.</p>
+      <div class="callout">La información sobre el trazado de conexión presenta una diferencia entre lo indicado por el personal del hospital y lo representado en los planos/catastro físico.</div>
+    </div>
+  </div>
+</section>
+
+<section id="inventario" class="section">
+  <div class="page-title"><div><h2>Inventario de aparatos hidrosanitarios</h2><p>Inventario consolidado por nivel.</p></div></div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Nivel</th><th>Uso</th><th>Sanitarios</th><th>Lavamanos</th><th>Duchas</th><th>Otros</th></tr></thead>
+      <tbody>
+        <tr><td><b>Nivel 1</b></td><td>Asistencial</td><td>8</td><td>12</td><td>—</td><td>2 pocetas de aseo; 3 lavaderos clínicos; 2 lavadoras; 2 lavaplatos; 3 llaves de manguera</td></tr>
+        <tr><td><b>Nivel 2</b></td><td>Administrativo</td><td>3</td><td>3</td><td>—</td><td>—</td></tr>
+        <tr><td><b>Nivel 3</b></td><td>Urgencias</td><td>16</td><td>18</td><td>10</td><td>2 pocetas de aseo; 2 llaves de manguera; 1 lavaplatos; 6 lavaderos clínicos; 1 vertedero clínico</td></tr>
+        <tr><td><b>Nivel 4</b></td><td>Archivo</td><td>1</td><td>1</td><td>—</td><td>—</td></tr>
+        <tr><td><b>Nivel 5</b></td><td>Bloque externo</td><td>1</td><td>1</td><td>1</td><td>—</td></tr>
+        <tr style="font-weight:800;background:#f7fafc"><td colspan="2">TOTAL HOSPITAL</td><td>30</td><td>35</td><td>11</td><td>3 pocetas · 9 lavaderos clínicos · 5 llaves de manguera · 3 lavaplatos · 2 lavadoras</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="generadores" class="section">
+  <div class="page-title"><div><h2>Puntos generadores por nivel y actividad</h2><p>Ambientes generadores identificados en los planos arquitectónicos.</p></div></div>
+  <div class="grid three">
+    <div class="card"><span class="badge blue">NIVEL 1 · ASISTENCIAL</span><h3 style="margin-top:10px">Generadores</h3><ul><li>Laboratorio clínico</li><li>Toma de muestras</li><li>Lavandería</li><li>Cafetería</li><li>Odontología</li><li>Aseo y baños generales</li></ul></div>
+    <div class="card"><span class="badge blue">NIVEL 2 · ADMINISTRATIVO</span><h3 style="margin-top:10px">Generadores</h3><ul><li>Baños generales</li></ul></div>
+    <div class="card"><span class="badge blue">NIVEL 3 · URGENCIAS</span><h3 style="margin-top:10px">Generadores</h3><ul><li>Esterilización</li><li>Sala de procedimientos</li><li>Sala de partos</li><li>Trabajo de parto</li><li>Obstetricia</li><li>Lactancia</li><li>Cocineta</li><li>Vacunación</li><li>Intoxicados</li><li>Aislados</li><li>Pediatría</li><li>Baños generales</li></ul></div>
+    <div class="card"><span class="badge blue">NIVEL 4 · ARCHIVO</span><h3 style="margin-top:10px">Generadores</h3><ul><li>Baños generales</li></ul></div>
+    <div class="card"><span class="badge blue">NIVEL 5 · BLOQUE EXTERNO</span><h3 style="margin-top:10px">Generadores</h3><ul><li>Baños generales</li></ul></div>
+  </div>
+</section>
+
+<section id="mapa" class="section">
+  <div class="page-title">
+    <div><h2>Visor geográfico · puntos de vertimiento</h2><p>Ubicación espacial de los tres puntos identificados en campo. El visor no dibuja redes ni tuberías; únicamente muestra los puntos sobre la imagen aérea.</p></div>
+    <div class="actions"><button class="btn" onclick="openMapImage()">Ampliar mapa</button></div>
+  </div>
+
+  <div class="map-layout">
+    <div class="map-panel">
+      <div class="map-panel-head">
+        <h3>Mapa satelital · ESE Hospital El Sagrado Corazón</h3>
+        <div class="map-tools">
+          <button class="btn" onclick="focusPoint(0)">P-01</button>
+          <button class="btn" onclick="focusPoint(1)">P-02</button>
+          <button class="btn" onclick="focusPoint(2)">P-03</button>
+        </div>
+      </div>
+      <div class="map-viewport" id="mapStage">
+        <img src="mapas/mapa-aereo-puntos-verificacion.jpg" alt="Imagen aérea del hospital con puntos de vertimiento">
+        <!-- Posiciones calibradas sobre los hitos visibles de la imagen aérea suministrada -->
+        <div class="map-marker p02" style="left:35.1%;top:32.2%" data-point="1" title="P-02 · Nivel 3 - Urgencias">
+          <div class="marker-shape"></div><div class="marker-label">P-02 · Nivel 3 · Urgencias</div>
+        </div>
+        <div class="map-marker p03" style="left:26.2%;top:40.1%" data-point="2" title="P-03 · Niveles 4 y 5">
+          <div class="marker-shape"></div><div class="marker-label">P-03 · Niveles 4 y 5</div>
+        </div>
+        <div class="map-marker p01" style="left:50.0%;top:46.5%" data-point="0" title="P-01 · Niveles 1 y 2">
+          <div class="marker-shape"></div><div class="marker-label">P-01 · Niveles 1 y 2</div>
+        </div>
+        <div class="map-legend">
+          <b style="color:var(--navy)">Puntos de conexión</b>
+          <div class="map-legend-row"><span class="legend-pin red"></span>P-01 · Niveles 1 y 2</div>
+          <div class="map-legend-row"><span class="legend-pin orange"></span>P-02 · Nivel 3</div>
+          <div class="map-legend-row"><span class="legend-pin green"></span>P-03 · Niveles 4 y 5</div>
+        </div>
+        <div class="map-scale">Referencia visual · imagen aérea del diagnóstico</div>
+      </div>
+    </div>
+
+    <aside class="map-side">
+      <div class="map-side-card">
+        <h3>📍 Puntos de conexión</h3>
+        <div id="mapPointCards"></div>
+      </div>
+      <div class="map-side-card">
+        <h3>Resumen del diagnóstico</h3>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:7px">
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">5</b><div style="font-size:9px;color:var(--muted)">Niveles</div></div>
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">30</b><div style="font-size:9px;color:var(--muted)">Sanitarios</div></div>
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">35</b><div style="font-size:9px;color:var(--muted)">Lavamanos</div></div>
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">11</b><div style="font-size:9px;color:var(--muted)">Duchas</div></div>
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">3</b><div style="font-size:9px;color:var(--muted)">Puntos</div></div>
+          <div style="text-align:center"><b style="font-size:18px;color:var(--navy)">1</b><div style="font-size:9px;color:var(--muted)">Activa</div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="map-info-strip">
+    <div class="route-step"><div class="circle">5</div><strong>Nivel 5</strong><span>Bloque externo</span></div>
+    <div class="route-step"><div class="circle">4</div><strong>Nivel 4</strong><span>Archivo</span></div>
+    <div class="route-step"><div class="circle">3</div><strong>Nivel 3</strong><span>Urgencias</span></div>
+    <div class="route-step"><div class="circle">2</div><strong>Nivel 2</strong><span>Administrativo</span></div>
+    <div class="route-step"><div class="circle">1</div><strong>Nivel 1</strong><span>Asistencial</span></div>
+  </div>
+</section>
+
+
+
+<section id="imagenes" class="section">
+  <div class="page-title">
+    <div><h2>Imágenes por nivel</h2><p>Registro fotográfico organizado exclusivamente por piso, conservando las fotografías incorporadas en el diagnóstico.</p></div>
+  </div>
+  <div class="callout">Selecciona cualquier fotografía para verla en grande. Las imágenes se mantienen vinculadas al nivel indicado en el registro original.</div>
+  <div id="levelGallery" class="level-gallery"></div>
+</section>
+
+<section id="planos" class="section">
+  <div class="page-title">
+    <div><h2>Mapas y planos · descarga</h2><p>Repositorio de mapas, planos y documentos gráficos incorporados al diagnóstico.</p></div>
+  </div>
+  <div class="callout"><b>Documentos incorporados:</b> Localización Cajas de Inspección Sanitaria y el plano anteriormente denominado “Planta Hidráulica”, presentado aquí con el nombre <b>Red de Drenaje Sanitario</b>.</div>
+  <div class="download-grid">
+    <div class="download-card">
+      <div class="download-icon">🗺️</div>
+      <h3>Mapa aéreo actual</h3>
+      <p>Imagen aérea con los tres puntos de verificación utilizados en el visor geográfico.</p>
+      <a class="btn primary" href="mapas/mapa-aereo-puntos-verificacion.jpg" download="Mapa_aereo_puntos_verificacion.jpg">Descargar mapa</a>
+    </div>
+    <div class="download-card">
+      <div class="download-icon">📍</div>
+      <h3>Localización Cajas de Inspección Sanitaria</h3>
+      <p>Plano suministrado para la localización de las cajas de inspección sanitaria.</p>
+      <a class="btn primary" href="mapas/Localizacion_Cajas_de_Inspeccion_Sanitaria.pdf" target="_blank">Abrir / descargar PDF</a>
+    </div>
+    <div class="download-card">
+      <div class="download-icon">📐</div>
+      <h3>Red de Drenaje Sanitario</h3>
+      <p>Archivo anteriormente denominado “Planta Hidráulica”. Se conserva como PDF y se presenta con el nombre solicitado.</p>
+      <a class="btn primary" href="mapas/Red_de_Drenaje_Sanitario.pdf" target="_blank">Abrir / descargar PDF</a>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Repositorio de mapas y planos</h3>
+    <table>
+      <thead><tr><th>Documento</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td>Mapa aéreo con puntos de verificación</td><td><span class="badge green">DISPONIBLE</span></td><td><a class="btn" href="mapas/mapa-aereo-puntos-verificacion.jpg" download="Mapa_aereo_puntos_verificacion.jpg">Descargar</a></td></tr>
+        <tr><td>Localización Cajas de Inspección Sanitaria</td><td><span class="badge green">DISPONIBLE</span></td><td><a class="btn" href="mapas/Localizacion_Cajas_de_Inspeccion_Sanitaria.pdf" target="_blank">Abrir PDF</a></td></tr>
+        <tr><td>Red de Drenaje Sanitario</td><td><span class="badge green">DISPONIBLE</span></td><td><a class="btn" href="mapas/Red_de_Drenaje_Sanitario.pdf" target="_blank">Abrir PDF</a></td></tr>
+        <tr><td>Mapa geográfico definitivo</td><td><span class="badge amber">PENDIENTE</span></td><td>Se incorporará cuando esté terminado</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="puntos" class="section">
+  <div class="page-title">
+    <div>
+      <h2>Cajas de inspección y punto de vertimiento</h2>
+      <p>Registro de los tres puntos identificados durante la visita: dos cajas de inspección confirmadas y un posible punto de conexión directa sin caja.</p>
+    </div>
+    <div class="actions"><span class="badge blue">3 puntos identificados</span></div>
+  </div>
+
+  <div class="grid three" style="margin-bottom:14px">
+    <div class="card"><div class="num" style="font-size:25px">2</div><div class="lab">Cajas de inspección confirmadas</div><p style="font-size:11px;color:var(--muted);margin-top:6px">P-02 y P-03</p></div>
+    <div class="card"><div class="num" style="font-size:25px">1</div><div class="lab">Posible conexión directa</div><p style="font-size:11px;color:var(--muted);margin-top:6px">P-01 · sin caja identificada</p></div>
+    <div class="card"><div class="num" style="font-size:25px">1</div><div class="lab">Descarga activa observada</div><p style="font-size:11px;color:var(--muted);margin-top:6px">P-02 · Nivel 3 Urgencias</p></div>
+  </div>
+
+  <div class="connection-photo-grid">
+    <article class="point-photo-card">
+      <div class="point-photo-head"><span class="point-chip red">P-01</span><div><h3>Niveles 1 y 2</h3><span class="badge amber">Pendiente de confirmación</span></div></div>
+      <img src="${POINTS[0].evidence}" alt="Evidencia P-01 · Niveles 1 y 2" onclick="openImage(this.src,'P-01 · Niveles 1 y 2')">
+      <div class="point-photo-info"><p><b>Tipo:</b> Posible conexión directa sin caja de inspección.</p><p><b>Coordenadas:</b> 7.11098767 N · -75.55113245 W</p><p><b>Hallazgo:</b> En campo se identificó, sobre la zona de césped junto al muro perimetral, el posible punto de conexión directa al alcantarillado.</p></div>
+    </article>
+
+    <article class="point-photo-card">
+      <div class="point-photo-head"><span class="point-chip orange">P-02</span><div><h3>Nivel 3 · Urgencias</h3><span class="badge green">Confirmado</span></div></div>
+      <img src="${POINTS[1].evidence}" alt="Evidencia P-02 · Nivel 3 Urgencias" onclick="openImage(this.src,'P-02 · Nivel 3 · Urgencias')">
+      <div class="point-photo-info"><p><b>Tipo:</b> Caja de inspección.</p><p><b>Coordenadas:</b> 7.11108018 N · -75.55126433 W</p><p><b>Hallazgo:</b> Caja confirmada con descarga activa mediante tubería PVC. Se define como punto existente para toma de muestra por corresponder al nivel de mayor generación.</p></div>
+    </article>
+
+    <article class="point-photo-card">
+      <div class="point-photo-head"><span class="point-chip green">P-03</span><div><h3>Niveles 4 y 5</h3><span class="badge green">Confirmado</span></div></div>
+      <img src="${POINTS[2].evidence}" alt="Evidencia P-03 · Niveles 4 y 5" onclick="openImage(this.src,'P-03 · Niveles 4 y 5')">
+      <div class="point-photo-info"><p><b>Tipo:</b> Caja de inspección.</p><p><b>Coordenadas:</b> 7.11102985 N · -75.55134391 W</p><p><b>Hallazgo:</b> Caja confirmada, de bajo uso. Se observó poco sedimento, principalmente hojarasca.</p></div>
+    </article>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Lectura técnica de los puntos</h3>
+    <table>
+      <thead><tr><th>Punto</th><th>Nivel</th><th>Elemento identificado</th><th>Estado</th><th>Uso / condición</th></tr></thead>
+      <tbody>
+        <tr><td><b>P-01</b></td><td>1 y 2</td><td>Posible conexión directa sin caja</td><td><span class="badge amber">Pendiente</span></td><td>Requiere confirmación física.</td></tr>
+        <tr><td><b>P-02</b></td><td>3 · Urgencias</td><td>Caja de inspección</td><td><span class="badge green">Confirmado</span></td><td>Descarga activa por PVC; punto para toma de muestra.</td></tr>
+        <tr><td><b>P-03</b></td><td>4 y 5</td><td>Caja de inspección</td><td><span class="badge green">Confirmado</span></td><td>Bajo uso; poco sedimento, principalmente hojarasca.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="hallazgos" class="section">
+  <div class="page-title"><div><h2>Hallazgos y discrepancias</h2><p>Comparación de la información de campo, personal y planos.</p></div></div>
+  <div class="grid two">
+    <div class="card">
+      <h3>Hallazgo H-01 · Diferencia de trazado</h3>
+      <span class="badge amber">REQUIERE CONCILIACIÓN / VERIFICACIÓN</span>
+      <p>Según el personal del hospital, la descarga se realiza por puntos ubicados en la parte posterior del edificio. En los planos/catastro físico hospitalario, la salida de la red se representa en la parte delantera del edificio.</p>
+    </div>
+    <div class="card">
+      <h3>Hallazgo H-02 · Punto de mayor generación</h3>
+      <span class="badge green">CONFIRMADO EN CAMPO</span>
+      <p>La caja correspondiente al Nivel 3 – Urgencias presenta descarga activa mediante tubería PVC. Por ser el nivel de mayor generación, el diagnóstico la define como punto existente para toma de muestra.</p>
+    </div>
+    <div class="card">
+      <h3>Hallazgo H-03 · Niveles 1–2</h3>
+      <span class="badge amber">POSIBLE CONEXIÓN DIRECTA</span>
+      <p>No se identificó caja de inspección. Se ubicó un posible punto de conexión directa en zona de césped junto al muro perimetral.</p>
+    </div>
+    <div class="card">
+      <h3>Hallazgo H-04 · Niveles 4–5</h3>
+      <span class="badge blue">CONFIRMADO · BAJO USO</span>
+      <p>La caja fue confirmada. El bajo uso es consistente con el baño de archivo sin uso y el aula del Nivel 5 utilizada de forma esporádica; se observó poco sedimento, principalmente hojarasca.</p>
+    </div>
+  </div>
+</section>
+
+<section id="conclusiones" class="section">
+  <div class="page-title"><div><h2>Conclusiones del diagnóstico</h2><p>Síntesis basada exclusivamente en la documentación suministrada.</p></div><div class="actions"><button class="btn primary" onclick="window.print()">Generar versión imprimible</button></div></div>
+  <div class="card">
+    <ol style="line-height:1.8;font-size:13px">
+      <li>La ESE Hospital El Sagrado Corazón está conectada al alcantarillado público mediante un sistema combinado de aguas negras y aguas lluvias.</li>
+      <li>No se reporta tratamiento previo de las aguas residuales mediante pozo séptico, PTAR o planta compacta.</li>
+      <li>El inventario consolidado registra 30 sanitarios, 35 lavamanos y 11 duchas, además de los demás aparatos indicados por nivel.</li>
+      <li>El Nivel 3 – Urgencias concentra la mayor generación de vertimientos y cuenta con una caja de inspección confirmada con descarga activa de PVC.</li>
+      <li>En los Niveles 1 y 2 se identificó un posible punto de conexión directa sin caja de inspección, pendiente de confirmación física.</li>
+      <li>En los Niveles 4 y 5 se confirmó una caja de inspección de bajo uso.</li>
+      <li>Existe una discrepancia entre la ubicación/trazado informado por el personal y la salida representada en los planos/catastro físico, por lo que el documento debe conservar ambas fuentes diferenciadas hasta su conciliación.</li>
+      <li>El diagnóstico incluye evidencia fotográfica de los puntos de conexión identificados: P-01, P-02 y P-03. La evidencia se presenta en la sección de cajas de inspección y punto de vertimiento.</li>
+    </ol>
+  </div>
+</section>
+
+<div class="print-only" style="margin-top:20px;font-size:10px;color:#66788a">
+  ESE Hospital El Sagrado Corazón · Briceño, Antioquia · Diagnóstico preliminar de puntos generadores de vertimientos · 28 de agosto de 2026
+</div>
+
+</main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">×</button>
+    <img id="modalImg" alt="Imagen ampliada">
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+</div>
+
+<script>
+const POINTS = [{"id": "P-01", "levels": "Niveles 1 y 2", "lat": "7.11098767 N", "lng": "-75.55113245 W", "type": "Conexión directa probable", "status": "Pendiente de confirmación física", "detail": "No existe caja de inspección. En campo se identificó sobre la zona de césped junto al muro perimetral el posible punto de conexión directa al alcantarillado.", "evidence": "fotos/puntos-inspeccion/P-01-evidencia.jpg"}, {"id": "P-02", "levels": "Nivel 3 · Urgencias", "lat": "7.11108018 N", "lng": "-75.55126433 W", "type": "Caja de inspección confirmada", "status": "Confirmado · descarga activa", "detail": "Es el nivel de mayor generación de vertimiento. Se verificó tubería PVC descargando a la caja. Se define como punto existente para toma de muestra.", "evidence": "fotos/puntos-inspeccion/P-02-evidencia.jpg"}, {"id": "P-03", "levels": "Niveles 4 y 5", "lat": "7.11102985 N", "lng": "-75.55134391 W", "type": "Caja de inspección confirmada", "status": "Confirmado · bajo uso", "detail": "Baja generación. El baño de archivo del Nivel 4 no se usa y el aula de trabajo con adolescentes y jóvenes del Nivel 5 se usa de forma esporádica. La caja presenta poco sedimento, principalmente hojarasca.", "evidence": "fotos/puntos-inspeccion/P-03-evidencia.jpg"}];
+const PHOTOS = [{"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 01", "src": "fotos/nivel-1/nivel-1-registro-01.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 02", "src": "fotos/nivel-1/nivel-1-registro-02.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 03", "src": "fotos/nivel-1/nivel-1-registro-03.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 04", "src": "fotos/nivel-1/nivel-1-registro-04.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 05", "src": "fotos/nivel-1/nivel-1-registro-05.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 06", "src": "fotos/nivel-1/nivel-1-registro-06.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 07", "src": "fotos/nivel-1/nivel-1-registro-07.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 08", "src": "fotos/nivel-1/nivel-1-registro-08.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 09", "src": "fotos/nivel-1/nivel-1-registro-09.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 10", "src": "fotos/nivel-1/nivel-1-registro-10.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 11", "src": "fotos/nivel-1/nivel-1-registro-11.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 12", "src": "fotos/nivel-1/nivel-1-registro-12.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 13", "src": "fotos/nivel-1/nivel-1-registro-13.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 14", "src": "fotos/nivel-1/nivel-1-registro-14.jpg"}, {"floor": 1, "floorName": "Nivel 1 · Asistencial", "label": "Registro 15", "src": "fotos/nivel-1/nivel-1-registro-15.jpg"}, {"floor": 2, "floorName": "Nivel 2 · Administrativo", "label": "Registro 01", "src": "fotos/nivel-2/nivel-2-registro-01.jpg"}, {"floor": 2, "floorName": "Nivel 2 · Administrativo", "label": "Registro 02", "src": "fotos/nivel-2/nivel-2-registro-02.jpg"}, {"floor": 2, "floorName": "Nivel 2 · Administrativo", "label": "Registro 03", "src": "fotos/nivel-2/nivel-2-registro-03.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 01", "src": "fotos/nivel-3-urgencias/nivel-3-registro-01.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 02", "src": "fotos/nivel-3-urgencias/nivel-3-registro-02.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 03", "src": "fotos/nivel-3-urgencias/nivel-3-registro-03.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 04", "src": "fotos/nivel-3-urgencias/nivel-3-registro-04.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 05", "src": "fotos/nivel-3-urgencias/nivel-3-registro-05.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 06", "src": "fotos/nivel-3-urgencias/nivel-3-registro-06.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 07", "src": "fotos/nivel-3-urgencias/nivel-3-registro-07.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 08", "src": "fotos/nivel-3-urgencias/nivel-3-registro-08.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 09", "src": "fotos/nivel-3-urgencias/nivel-3-registro-09.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 10", "src": "fotos/nivel-3-urgencias/nivel-3-registro-10.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 11", "src": "fotos/nivel-3-urgencias/nivel-3-registro-11.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 12", "src": "fotos/nivel-3-urgencias/nivel-3-registro-12.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 13", "src": "fotos/nivel-3-urgencias/nivel-3-registro-13.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 14", "src": "fotos/nivel-3-urgencias/nivel-3-registro-14.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 15", "src": "fotos/nivel-3-urgencias/nivel-3-registro-15.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 16", "src": "fotos/nivel-3-urgencias/nivel-3-registro-16.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 17", "src": "fotos/nivel-3-urgencias/nivel-3-registro-17.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 18", "src": "fotos/nivel-3-urgencias/nivel-3-registro-18.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 19", "src": "fotos/nivel-3-urgencias/nivel-3-registro-19.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 20", "src": "fotos/nivel-3-urgencias/nivel-3-registro-20.jpg"}, {"floor": 3, "floorName": "Nivel 3 · Urgencias", "label": "Registro 21", "src": "fotos/nivel-3-urgencias/nivel-3-registro-21.jpg"}, {"floor": 5, "floorName": "Nivel 5 · Bloque externo", "label": "Registro 01", "src": "fotos/nivel-5/nivel-5-registro-01.jpg"}];
+
+function renderLevelGallery(){
+  const wrap=document.getElementById('levelGallery');
+  if(!wrap) return;
+  const groups={1:{name:'Nivel 1 · Asistencial',photos:[]},2:{name:'Nivel 2 · Administrativo',photos:[]},3:{name:'Nivel 3 · Urgencias',photos:[]},4:{name:'Nivel 4 · Archivo',photos:[]},5:{name:'Nivel 5 · Bloque externo',photos:[]}};
+  PHOTOS.forEach((photo,i)=>{
+    if(groups[photo.floor]) groups[photo.floor].photos.push({...photo,index:i});
+  });
+  wrap.innerHTML=Object.values(groups).map(g=>`
+    <article class="level-card">
+      <div class="level-card-head"><h3>${g.name}</h3><span class="level-count">${g.photos.length} ${g.photos.length===1?'imagen':'imágenes'}</span></div>
+      ${g.photos.length ? `<div class="level-photo-grid">${g.photos.map(p=>`<figure class="level-photo" data-photo-index="${p.index}"><img src="${p.src}" alt="${p.floorName} · ${p.label}" loading="lazy"><figcaption><b>${p.label}</b><br>${p.floorName}</figcaption></figure>`).join('')}</div>` : `<div class="level-empty">No hay fotografías incorporadas para este nivel en el diagnóstico.</div>`}
+    </article>`).join('');
+  wrap.querySelectorAll('.level-photo').forEach(fig=>fig.addEventListener('click',()=>{
+    const p=PHOTOS[Number(fig.dataset.photoIndex)];
+    openImage(p.src,p.floorName+' · '+p.label);
+  }));
+}
+
+function hydratePointPhotos(){
+  document.querySelectorAll('.point-photo-card img').forEach((img,i)=>{ if(POINTS[i] && POINTS[i].evidence) img.src=POINTS[i].evidence; });
+}
+const sections = [...document.querySelectorAll('.section')];
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const id=btn.dataset.section;
+    sections.forEach(s=>s.classList.toggle('active',s.id===id));
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b===btn));
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+function renderPointCards(){
+  const wrap=document.getElementById('mapPointCards');
+  wrap.innerHTML=POINTS.map((p,i)=>{
+    const cls=i===0?'red':i===1?'orange':'green';
+    const ok=i!==0;
+    return `<div class="connection-card" data-point-card="${i}">
+      <div class="connection-head">
+        <div class="connection-icon ${cls}"></div>
+        <div>
+          <div class="connection-title">${p.id} · ${p.levels}</div>
+          <div style="font-size:9px;color:#6a7b89;margin-top:2px">${p.lat} · ${p.lng}</div>
+        </div>
+        <span class="connection-status ${ok?'ok':''}">${ok?'Confirmado':'Pendiente'}</span>
+      </div>
+      <div class="connection-body"><b>${p.type}</b><br>${p.detail}</div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-point-card]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      showPointDetail(Number(el.dataset.pointCard));
+      document.querySelector('[data-section="puntos"]').click();
+    });
+  });
+}
+function showPointDetail(i){
+  const p=POINTS[i];
+  document.getElementById('pointDetail').innerHTML=`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+        <div><span class="badge ${i===1?'green':i===0?'amber':'blue'}">${p.status}</span>
+        <h3 style="margin-top:9px;font-size:20px">${p.id} · ${p.levels}</h3></div>
+        <div class="coords" style="font-size:12px">${p.lat}<br>${p.lng}</div>
+      </div>
+      <div class="grid two" style="margin-top:12px">
+        <div><p><b>Tipo:</b> ${p.type}</p><p>${p.detail}</p></div>
+        <img src="${p.evidence}" alt="Evidencia fotográfica ${p.id}" style="width:100%;border-radius:9px;border:1px solid var(--border);cursor:pointer" onclick="openImage(this.src,'${p.id} · ${p.levels}')">
+      </div>
+    </div>`;
+}
+function renderFloorTabs(){
+  const counts={1:15,2:3,3:21,4:0,5:1};
+  const names={1:'Nivel 1 · Asistencial',2:'Nivel 2 · Administrativo',3:'Nivel 3 · Urgencias',4:'Nivel 4 · Archivo',5:'Nivel 5 · Bloque externo'};
+  const tabs=document.getElementById('floorTabs');
+  tabs.innerHTML=Object.keys(counts).map(f=>`<button class="floor-tab" data-floor="${f}">${names[f]} <b style="opacity:.7">· ${counts[f]}</b></button>`).join('');
+  tabs.querySelectorAll('.floor-tab').forEach(t=>t.addEventListener('click',()=>renderPhotos(Number(t.dataset.floor))));
+  renderPhotos(1);
+}
+function renderPhotos(floor){
+  document.querySelectorAll('.floor-tab').forEach(t=>t.classList.toggle('active',Number(t.dataset.floor)===floor));
+  const grid=document.getElementById('photoGrid'), empty=document.getElementById('floorEmpty');
+  const list=PHOTOS.filter(p=>p.floor===floor);
+  grid.innerHTML='';
+  if(!list.length){
+    empty.style.display='block';
+    empty.textContent='No se incorporó evidencia fotográfica para este nivel en el documento suministrado. El diagnóstico sí registra un baño equipado con sanitario y lavamanos en la planta del Nivel 4, pero el propio documento indica “sin evidencia” fotográfica.';
+    return;
+  }
+  empty.style.display='none';
+  list.forEach((p)=>{
+    const c=document.createElement('article'); c.className='photo-card';
+    c.innerHTML=`<img src="${p.src}" alt="${p.floorName} · ${p.label}"><div class="photo-info"><strong>${p.floorName}</strong><span>${p.label} · registro del diagnóstico</span></div>`;
+    c.addEventListener('click',()=>openImage(p.src,`${p.floorName} · ${p.label}`));
+    grid.appendChild(c);
+  });
+}
+function openImage(src,caption=''){
+  document.getElementById('modalImg').src=src;
+  document.getElementById('modalCaption').textContent=caption;
+  document.getElementById('modal').classList.add('open');
+}
+function focusPoint(i){
+  const p=document.querySelector(`.map-marker[data-point="${i}"]`);
+  if(p){p.scrollIntoView({behavior:'smooth',block:'center'}); p.animate([{transform:'translate(-50%,-100%) scale(1)'},{transform:'translate(-50%,-100%) scale(1.18)'},{transform:'translate(-50%,-100%) scale(1)'}],{duration:600});}
+}
+function openMapImage(){openImage("mapas/mapa-aereo-puntos-verificacion.jpg",'Mapa de puntos de verificación del sistema de alcantarillado');}
+document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modal').classList.remove('open'));
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('open')});
+
+renderLevelGallery();
+
+document.querySelectorAll('.map-marker').forEach(pin=>{
+  pin.addEventListener('click',()=>{
+    const i=Number(pin.dataset.point);
+    showPointDetail(i);
+    document.querySelector('[data-section="puntos"]').click();
+  });
+});
+
+renderPointCards();
+  hydratePointPhotos();
+showPointDetail(1);
+</script>
+<footer style="padding:18px 24px 30px;color:var(--muted);font-size:10px;text-align:center">Repositorio editable: fotos, mapas, planos y documentos se almacenan en carpetas separadas para facilitar su actualización en GitHub.</footer>
+</body>
+</html>
